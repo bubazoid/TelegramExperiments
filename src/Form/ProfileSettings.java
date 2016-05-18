@@ -1,6 +1,7 @@
 package Form;
 
-import Model.SelfUser;
+import Model.Me;
+import temp.SelfUser;
 import View.ResManager;
 
 import javax.swing.*;
@@ -20,6 +21,7 @@ public class ProfileSettings {
     private JPanel panel;
     private JLabel profileTitleLable;
     private SelfUser selfUser;
+    private Me me;
 
 
     public JPanel getRootPanel() {
@@ -50,11 +52,11 @@ public class ProfileSettings {
         return panel;
     }
 
-    public void fillForm(SelfUser selfUser) {
-        this.selfUser = selfUser;
-        firstNameFTF.setText(selfUser.getFirstName());
-        lastNameFTF.setText(selfUser.getLastName());
-        phoneNumberLable.setText(selfUser.getFormatetPhoneNumber());
+    public void fillForm(Me me) {
+        this.me = me;
+        firstNameFTF.setText(me.getFirstName());
+        lastNameFTF.setText(me.getLastName());
+        phoneNumberLable.setText(me.getFormatetPhoneNumber());
     }
 
     private void createUIComponents() {

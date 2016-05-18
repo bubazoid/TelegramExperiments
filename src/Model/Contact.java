@@ -1,54 +1,39 @@
 package Model;
 
-import java.awt.*;
+import org.javagram.response.object.UserContact;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
 /**
- * Created by bubnyshev on 19.04.2016.
+ * Created by HerrSergio on 06.05.2016.
  */
-public class Contact {
-    protected String firstName;
-    protected String lastName;
-    protected String phoneNumber;
+public class Contact extends KnownPerson {
 
-    public Contact(String firstName, String lastName, String phoneNumber) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.phoneNumber = phoneNumber;
+    public Contact(String lastName, String firstName, String phoneNumber, int id) {
+        setId(id);
+        setFirstName(firstName);
+        setLastName(lastName);
+        setPhoneNumber(phoneNumber);
     }
 
-    public Contact(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    Contact(UserContact userContact) {
+        this(userContact.getLastName(), userContact.getFirstName(), userContact.getPhone(), userContact.getId());
+        BufferedImage buffImage = new BufferedImage(41, 41, BufferedImage.TYPE_INT_ARGB);
+        try {
+            if (userContact.getPhoto(true) != null) {
+                setSmallProfilePhoto(ImageIO.read(new ByteArrayInputStream(userContact.getPhoto(true))));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
-    public String getLable() {
-        return firstName + " " + lastName;
+    @Override
+    public String toString() {
+        return "Contact{} " + super.toString();
     }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public String getFormatetPhoneNumber() {
-        String formattedPhoneNumber = phoneNumber.charAt(0) + " " + phoneNumber.substring(1, 4) + " " +
-                phoneNumber.substring(4, 7) + "-" + phoneNumber.substring(7, 9) + "-" + phoneNumber.substring(9, 11);
-        return formattedPhoneNumber;
-    }
-
-
 }

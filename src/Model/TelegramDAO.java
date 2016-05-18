@@ -1,4 +1,4 @@
-package DAO;
+package Model;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -9,7 +9,7 @@ import java.util.LinkedHashMap;
  * Created by HerrSergio on 06.05.2016.
  */
 public interface TelegramDAO extends Closeable {
-    Status getStatus();
+    Status isContactOnline();
     void acceptNumber(String phoneNumber) throws IOException;
     void sendCode() throws IOException;
 
@@ -33,6 +33,8 @@ public interface TelegramDAO extends Closeable {
     ArrayList<Dialog> getDialogs() throws  IOException;
     ArrayList<Message> getMessagesOfContact(int id, int lastMessageId, int limit) throws IOException;
     ArrayList<Message> getMessagesOfForeign(int id, long accessHash, int lastMessageId, int limit) throws IOException;
+
+    boolean isContactOnline(Contact contact);
 
     default ArrayList<Message> getMessages(Person person, Message last, int limit) throws IOException {
         int lastMessageId = 0;

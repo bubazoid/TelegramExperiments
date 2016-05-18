@@ -1,10 +1,9 @@
-package Model;
+package temp;
 
 import org.javagram.TelegramApiBridge;
 import org.javagram.response.AuthAuthorization;
 import org.javagram.response.AuthCheckedPhone;
 import org.javagram.response.object.User;
-import org.javagram.response.object.UserContact;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -125,7 +124,7 @@ public class SelfUser extends Contact {
         return contacts;
     }
 
-    public void deleteContact(UserContact selectedUser) {
+    public void deleteContact(Model.Contact selectedUser) {
         try {
             bridge.contactsDeleteContact(selectedUser.getId());
 
@@ -138,7 +137,7 @@ public class SelfUser extends Contact {
 
     }
 
-    public void updateContact(UserContact contact, String fio) {
+    public void updateContact(Model.Contact contact, String fio) {
 
     }
 

@@ -1,4 +1,4 @@
-package DAO;
+package Model;
 
 import java.io.IOException;
 
@@ -26,7 +26,7 @@ public abstract class AbstractTelegramDAO implements TelegramDAO {
     }
 
         @Override
-    public Status getStatus() {
+        public Status isContactOnline() {
         return status;
     }
 

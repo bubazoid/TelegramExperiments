@@ -1,19 +1,13 @@
 package Form;
 
-import Model.SelfUser;
-import temp.DialogCellRenderer;
+import Model.Contact;
+import Model.Me;
+import temp.SelfUser;
 import View.ResManager;
-import org.javagram.response.object.Message;
-import org.javagram.response.object.MessagesMessage;
-import org.javagram.response.object.UserContact;
 
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -47,6 +41,7 @@ public class MainWindow {
     private SelfUser user;
     private Image userIconImage;
     private Image contactIconImage;
+    private Me me;
 
     public MainWindow() {
         dialogPanel.setLayout(new BoxLayout(dialogPanel, BoxLayout.Y_AXIS));
@@ -218,11 +213,11 @@ public class MainWindow {
 
     }
 
-    public void setMessages(ArrayList<MessagesMessage> messages) {
+    public void setMessages(ArrayList<Model.Message> messages) {
         dialogPanel.removeAll();
         if (messages != null) {
             for (int i = messages.size(); i > 0; i--) {
-                Message message = messages.get(i - 1);
+                Model.Message message = messages.get(i - 1);
                 JPanel panel = new JPanel() {
                     @Override
                     public Dimension getMaximumSize() {
@@ -234,7 +229,7 @@ public class MainWindow {
                     }
                 };
                 panel.setLayout(new FlowLayout(message.isOut() ? FlowLayout.RIGHT : FlowLayout.LEFT));
-                panel.add(new MessageForm(message.getMessage(), message.getDate().toString(), 300,
+                panel.add(new MessageForm(message.getText(), message.getDate().toString(), 300,
                         message.isOut() ? new Color(0x4C41AC) : new Color(0x00A8DA)));
                 dialogPanel.add(panel);
             }
@@ -243,25 +238,22 @@ public class MainWindow {
         dialogScrollPane.getVerticalScrollBar().setValue(dialogScrollPane.getHeight());
     }
 
-    public void setUser(SelfUser user) {
-        this.user = user;
-        userFioLable.setText(user.getLable());
-        userIconImage = user.getIconImage();
+    public void setUser(Me user) {
+        this.me = user;
+        userFioLable.setText(me.getLable());
+        userIconImage = me.getSmallProfilePhoto().getScaledInstance(29, 29, Image.SCALE_SMOOTH);
 
     }
 
-    public void setContact(UserContact contact) {
+    public void setContact(Contact contact) {
         contactIconImage = null;
-        contactNameLable.setText(contact.toString());
-        try {
-            BufferedImage buffImage = new BufferedImage(29, 29, BufferedImage.TYPE_INT_ARGB);
-            if (contact.getPhoto(true) != null) {
-                buffImage = ImageIO.read(new ByteArrayInputStream(contact.getPhoto(true)));
+        contactNameLable.setText(contact.getLable());
+
+        if (contact.getSmallProfilePhoto() != null) {
+            contactIconImage = contact.getSmallProfilePhoto().getScaledInstance(29, 29, Image.SCALE_SMOOTH);
             }
-            contactIconImage = buffImage.getScaledInstance(29, 29, Image.SCALE_SMOOTH);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+
         contactIconPanel.repaint();
 
     }

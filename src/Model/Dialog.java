@@ -1,4 +1,4 @@
-package DAO;
+package Model;
 
 /**
  * Created by HerrSergio on 07.05.2016.

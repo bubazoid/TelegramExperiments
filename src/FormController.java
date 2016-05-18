@@ -1,9 +1,9 @@
+import Model.*;
+import Model.Dialog;
 import Form.*;
-import Model.Contacts;
-import Model.SelfUser;
-import View.*;
-import org.javagram.response.object.UserContact;
-import temp.DialogCellRenderer;
+import View.ComponentResizerExtended;
+import View.ContactCellRenderer;
+import View.MyOverlayPanel;
 import temp.MyBufferedPopupDialog;
 
 import javax.swing.*;
@@ -11,9 +11,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
 import java.text.ParseException;
-
-import static Model.SelfUser.INVITED;
-import static Model.SelfUser.NOT_REGISTRED;
+import java.util.ArrayList;
 
 /**
  * Created by Bubazoid on 10.04.2016.
@@ -33,11 +31,17 @@ public class FormController extends JFrame {
     //    MyLayeredPane layoutPanel = new MyLayeredPane(mainWindow.getRootPanel(), profileSettings.getRootPanel(), addContact.getRootPanel(), editContact.getRootPanel());
     MyBufferedPopupDialog layoutPanel = new MyBufferedPopupDialog(mainWindow.getRootPanel(), profileSettings.getRootPanel(), addContact.getRootPanel(), editContact.getRootPanel());
     MyOverlayPanel contactListLayout = new MyOverlayPanel(contactListPane.getRootPanel(), addContactButton.getRootPanel());
-    private SelfUser selfUser;
-    private Contacts contacts;
+    //    private SelfUser selfUser;
+    private ArrayList<Contact> contacts;
     //    private DialogCellRenderer dialogCellRenderer;
-    private ContactCellRenderer contactCellRenderer;
+
     private int pX, pY;
+
+    //========================================================================
+    TelegramDAO apiBridgeTelegramDAO = new ApiBridgeTelegramDAO();
+    private ContactCellRenderer contactCellRenderer = new ContactCellRenderer(apiBridgeTelegramDAO);
+    Me me;
+    private ArrayList<Dialog> dialogs;
 
     //===========================================================================
     private static final int EDIT_CONTACT = 2;
@@ -152,59 +156,67 @@ public class FormController extends JFrame {
         );
         profileSettings.getLogOffButton().addActionListener(e -> loqOff());
         profileSettings.getProfileSettingsAcceptButton().addActionListener(e -> {
-            selfUser.updateProfile();
+//            selfUser.updateProfile();
             switchToMainForm(true);
         });
     }
 
     private void updateContact() {
-        selfUser.updateContact(getSelectedUser(), editContact.getFioFTF().getText());
+//        selfUser.updateContact(getSelectedUser(), editContact.getFioFTF().getText());
         switchToMainForm(true);
     }
 
     private void addContact() {
-        selfUser.addContact(addContact.getPhoneNumberFTF().getText(), addContact.getFirstNameFTF().getText(), addContact.getLastNameFTF().getText());
+//        selfUser.addContact(addContact.getPhoneNumberFTF().getText(), addContact.getFirstNameFTF().getText(), addContact.getLastNameFTF().getText());
         switchToMainForm(true);
     }
 
     private void delContact() {
-        selfUser.deleteContact(getSelectedUser());
+//        selfUser.deleteContact(getSelectedUser());
         switchToMainForm(true);
     }
 
 
     private void verifyFIO() {
-        selfUser.setFirstName(finishCheckIn.getFirstNameFTF().getText());
-        selfUser.setLastName(finishCheckIn.getLastNameFTF().getText());
+
+//        selfUser.setFirstName(finishCheckIn.getFirstNameFTF().getText());
+//        selfUser.setLastName(finishCheckIn.getLastNameFTF().getText());
         switchToPhoneVerifyForm();
     }
 
 
     private void loginAction() {
-        selfUser = new SelfUser(loginForm.getPhoneNumberField().getText().replaceAll("[^0-9]+", ""));
-        switch (selfUser.getAuthStatus()) {
-            case SelfUser.REGISTRED:
-                switchToPhoneVerifyForm();
-                break;
-            case INVITED:
-                switchToCheckInForm();
-                break;
-            case NOT_REGISTRED:
-                switchToCheckInForm();
-                break;
+//        selfUser = new SelfUser(loginForm.getPhoneNumberField().getText().replaceAll("[^0-9]+", ""));
+        try {
+            apiBridgeTelegramDAO.acceptNumber(loginForm.getPhoneNumberField().getText().replaceAll("[^0-9]+", ""));
+            switch (apiBridgeTelegramDAO.isContactOnline()) {
+                case REGISTERED:
+                    switchToPhoneVerifyForm();
+                    break;
+                case INVITED:
+                    switchToCheckInForm();
+                    break;
+                case NOT_REGISTERED:
+                    switchToCheckInForm();
+                    break;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
 
     }
 
-    private UserContact getSelectedUser() {
+    private Contact getSelectedUser() {
 
-        return contacts.getContactsList(false).get(contactListPane.getContactList().getSelectedIndex());
+        return contacts.get(contactListPane.getContactList().getSelectedIndex());
 
     }
 
     private void loqOff() {
 
-        selfUser.logOut();
+
+        apiBridgeTelegramDAO.logOut();
         backForm();
         loginForm.clearFields();
         phoneVerifyForm.clearFields();
@@ -221,29 +233,52 @@ public class FormController extends JFrame {
     private void verifyPhoneCode() {
         String code = new String(phoneVerifyForm.getPhoneVerifyCodeField().getPassword());
         if (code.matches("^[0-9]{5}$")) {
-            if (selfUser.auth(code)) {
-                contacts = selfUser.getContacts();
-                contactCellRenderer = new ContactCellRenderer(contacts);
-//                dialogCellRenderer = new DialogCellRenderer();
+            try {
+                if (apiBridgeTelegramDAO.canSignIn()) {
+                    me = apiBridgeTelegramDAO.signIn(code);
+                } else {
+                    me = apiBridgeTelegramDAO.signUp(code, finishCheckIn.getFirstNameFTF().getText(), finishCheckIn.getLastNameFTF().getText());
+                }
+                if (me != null) {
+                    contacts = apiBridgeTelegramDAO.getContacts();
+                    switchToMainForm(true);
+                }
 
-                switchToMainForm(true);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }
 
 
     private void switchToPhoneVerifyForm() {
-        selfUser.sendSMSCode();
-        phoneVerifyForm.getPhoneNumberField().setText(selfUser.getFormatetPhoneNumber());
-        rootForm.switchFormTo(phoneVerifyForm.getRootPanel());
-        phoneVerifyForm.getPhoneVerifyCodeField().requestFocusInWindow();
+//        selfUser.sendSMSCode();
+        try {
+            apiBridgeTelegramDAO.sendCode();
+            phoneVerifyForm.getPhoneNumberField().setText(apiBridgeTelegramDAO.getPhoneNumber());
+            rootForm.switchFormTo(phoneVerifyForm.getRootPanel());
+            phoneVerifyForm.getPhoneVerifyCodeField().requestFocusInWindow();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+//        phoneVerifyForm.getPhoneNumberField().setText(selfUser.getFormatetPhoneNumber());
+//        rootForm.switchFormTo(phoneVerifyForm.getRootPanel());
+//        phoneVerifyForm.getPhoneVerifyCodeField().requestFocusInWindow();
 
     }
 
     private void switchToMainForm(boolean renew) {
         if (renew) {
-            contactListPane.fillContactList(contacts.getContactsList(renew), contactCellRenderer);
-            mainWindow.setUser(selfUser);
+
+            try {
+                contactCellRenderer.setDialogs(apiBridgeTelegramDAO.getDialogs());
+                contactListPane.fillContactList(contacts, contactCellRenderer);
+                mainWindow.setUser(me);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
         }
 
         rootForm.switchFormTo(layoutPanel);
@@ -251,11 +286,15 @@ public class FormController extends JFrame {
     }
 
     private void selectContactInList() {
-        UserContact contact = getSelectedUser();
+        Contact contact = getSelectedUser();
         if (contact != null) {
             mainWindow.setContact(contact);
-            mainWindow.setMessages(contacts.getMessages(contact));
-
+//            mainWindow.setMessages(contacts.getMessages(contact));
+            try {
+                mainWindow.setMessages(apiBridgeTelegramDAO.getMessagesOfContact(contact.getId(), 0, 10));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
         }
 
@@ -277,18 +316,19 @@ public class FormController extends JFrame {
     }
 
     private void switchToProfileEdit() {
-        profileSettings.fillForm(selfUser);
+        profileSettings.fillForm(me);
         layoutPanel.setIndex(EDIT_PROFILE);
     }
 
     private void switchToLoginInForm() {
+
         rootForm.switchFormTo(loginForm.getRootPane());
     }
 
     private void exitProgram() {
-        if (selfUser != null && selfUser.isAuth()) {
-            selfUser.logOut();
-        }
+
+        apiBridgeTelegramDAO.logOut();
+        apiBridgeTelegramDAO.close();
         System.exit(0);
     }
 

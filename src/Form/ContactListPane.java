@@ -1,8 +1,8 @@
 package Form;
 
+import Model.Contact;
 import View.ContactCellRenderer;
 import View.ResManager;
-import org.javagram.response.object.UserContact;
 
 import javax.swing.*;
 import java.awt.*;
@@ -44,10 +44,10 @@ public class ContactListPane {
         return rootPanel;
     }
 
-    public void fillContactList(ArrayList<UserContact> contacts, ContactCellRenderer cellRenderer) {
+    public void fillContactList(ArrayList<Contact> contacts, ContactCellRenderer cellRenderer) {
         DefaultListModel model = new DefaultListModel();
-        for (UserContact userContact : contacts) {
-            model.addElement(userContact);
+        for (Contact contact : contacts) {
+            model.addElement(contact);
 
         }
         contactList.setModel(model);

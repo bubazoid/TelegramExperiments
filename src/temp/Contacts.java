@@ -1,4 +1,4 @@
-package Model;
+package temp;
 
 import org.javagram.TelegramApiBridge;
 import org.javagram.response.MessagesMessages;

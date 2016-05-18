@@ -1,15 +1,13 @@
 package View;
 
-import Model.Contacts;
-import org.javagram.response.object.UserContact;
+import Model.*;
+import Model.Dialog;
+import temp.Contacts;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Created by Sergey on 15.05.2016.
@@ -20,14 +18,16 @@ public class ContactCellRenderer extends JPanel implements ListCellRenderer<Obje
     private JLabel topMessageLable;
     private JPanel labelPanel;
     private JPanel contactPane;
-    private UserContact user;
+    private Contact user;
     private boolean isSelected;
     Image icon = null;
     private Contacts contacts;
     private String topMessage = "";
+    private ArrayList<Model.Dialog> dialogs;
+    TelegramDAO apiBridgeTelegramDAO;
 
-    public ContactCellRenderer(Contacts contacts) {
-        this.contacts = contacts;
+    public ContactCellRenderer(TelegramDAO apiBridgeTelegramDAO) {
+        this.apiBridgeTelegramDAO = apiBridgeTelegramDAO;
     }
 
     private void createUIComponents() {
@@ -47,24 +47,21 @@ public class ContactCellRenderer extends JPanel implements ListCellRenderer<Obje
 
     @Override
     public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-        user = (UserContact) value;
+        user = (Contact) value;
         this.isSelected = isSelected;
-
-        try {
-            BufferedImage image = new BufferedImage(41, 41, BufferedImage.TYPE_INT_ARGB);
-            if (user.getPhoto(true) != null) {
-                image = ImageIO.read(new ByteArrayInputStream(user.getPhoto(true)));
-//            Image newIcon = image.getScaledInstance(41,41,Image.SCALE_SMOOTH);
+        if (user.getSmallProfilePhoto() != null) {
+            icon = user.getSmallProfilePhoto().getScaledInstance(41, 41, Image.SCALE_SMOOTH);
             }
-            icon = image.getScaledInstance(41, 41, Image.SCALE_SMOOTH);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
 
-        fioLable.setText(value.toString());
-        topMessageLable.setText(contacts.getTopMessage(user.getId()));
+        fioLable.setText(((Contact) value).getLable());
+        topMessageLable.setText(getTopMessage(user));
+        dialogs.forEach(e -> {
+            if (e.getBuddy().getId() == user.getId()) {
+                topMessageLable.setText(e.getLastMessage().getText());
+            }
+        });
+
 
         Color background;
         Color foreground;
@@ -90,6 +87,24 @@ public class ContactCellRenderer extends JPanel implements ListCellRenderer<Obje
         return this;
     }
 
+    private String getTopMessage(Contact contact) {
+        String topMessage = "";
+        for (Dialog dialog :
+                dialogs) {
+            if (dialog.getBuddy().getId() == user.getId()) {
+                topMessage = dialog.getLastMessage().getText();
+                break;
+            }
+        }
+
+
+        return topMessage;
+    }
+
+    public void setDialogs(ArrayList<Dialog> dialogs) {
+        this.dialogs = dialogs;
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
 //        topMessageLable.setText(contacts.getTopMessage(user.getId()));
@@ -98,13 +113,13 @@ public class ContactCellRenderer extends JPanel implements ListCellRenderer<Obje
         g.drawImage(icon, 15, 9, null);
 
         if (isSelected) {
-            if (user.isOnline()) {
+            if (apiBridgeTelegramDAO.isContactOnline(user)) {
                 g.drawImage(ResManager.getMaskWhiteOnline(), 15, 9, null);
             } else {
                 g.drawImage(ResManager.getMaskWhite(), 15, 9, null);
             }
         } else {
-            if (user.isOnline()) {
+            if (apiBridgeTelegramDAO.isContactOnline(user)) {
                 g.drawImage(ResManager.getMaskGrayOnline(), 15, 9, null);
             } else {
                 g.drawImage(ResManager.getMaskGray(), 15, 9, null);

@@ -1,4 +1,4 @@
-package DAO;
+package Model;
 
 import org.javagram.TelegramApiBridge;
 import org.javagram.response.*;
@@ -18,10 +18,12 @@ import java.util.Collection;
 public class ApiBridgeTelegramDAO extends AbstractTelegramDAO {
 
     private TelegramApiBridge bridge;
+    private ArrayList<UserContact> userContactsStatus;
+    Long lastUpdateTime = Long.valueOf(0);
 
 
     public ApiBridgeTelegramDAO() throws IOException {
-        bridge = new TelegramApiBridge("149.154.167.50:443", 0, "*********************************");
+        bridge = new TelegramApiBridge("149.154.167.50:443", 43373, "6d84f56fa896639638ff7b941bc83f45");
     }
 
     @Override
@@ -185,6 +187,28 @@ public class ApiBridgeTelegramDAO extends AbstractTelegramDAO {
     }
 
     @Override
+    public boolean isContactOnline(Contact contact) {
+        boolean isOnline = false;
+
+        try {
+            Long now = System.currentTimeMillis();
+            if (now - lastUpdateTime > 3000 || userContactsStatus == null) {
+                userContactsStatus = bridge.contactsGetContacts();
+                lastUpdateTime = System.currentTimeMillis();
+            }
+            for (UserContact user : userContactsStatus) {
+                if (user.getId() == contact.getId()) {
+                    isOnline = user.isOnline();
+                    break;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return isOnline;
+    }
+
+    @Override
     public Me getMe() throws IOException {
         return new Me((UserSelf) bridge.usersGetUsers(Arrays.asList(new InputUserOrPeerSelf())).get(0));
     }
@@ -217,6 +241,6 @@ public class ApiBridgeTelegramDAO extends AbstractTelegramDAO {
                 text = messagesMessage.getFwdFrom() + " wrote on " + messagesMessage.getFwdData() + " :\n" + text;
             }
             return new Message(messagesMessage.getId(), messagesMessage.getDate(), text,
-                    !messagesMessage.isUnread(), sender, receiver);
+                    !messagesMessage.isUnread(), sender, receiver, messagesMessage.isOut());
     }
 }

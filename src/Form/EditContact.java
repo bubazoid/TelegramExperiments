@@ -1,7 +1,7 @@
 package Form;
 
+import Model.Contact;
 import View.ResManager;
-import org.javagram.response.object.UserContact;
 
 import javax.swing.*;
 import java.awt.*;
@@ -123,8 +123,8 @@ public class EditContact {
         };
     }
 
-    public void setContact(UserContact selectedUser) {
-        phoneNumberLabel.setText(selectedUser.getPhone());
+    public void setContact(Contact selectedUser) {
+        phoneNumberLabel.setText(selectedUser.getPhoneNumber());
         fioFTF.setText(selectedUser.getFirstName() + " " + selectedUser.getLastName());
     }
 }

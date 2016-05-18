@@ -1,8 +1,7 @@
-package DAO;
+package Model;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -80,6 +79,11 @@ public class DebugTelegramDAO extends AbstractTelegramDAO {
         return new ArrayList<>();
     }
 
+    @Override
+    public boolean isContactOnline(Contact contact) {
+        return false;
+    }
+
     private static final String correctCode = "00000";
 
     @Override
@@ -137,12 +141,12 @@ public class DebugTelegramDAO extends AbstractTelegramDAO {
             data = new LinkedHashMap<>();
 
             Contact contact = new Contact("Doe", "Jane", "1234567890", 1);
-            data.put(contact,
-                new Message[] {
-                    new Message(3, new Date(), "Nothing", false, contact, getMe()),
-                    new Message(2, new Date(), "Something", true, contact, getMe()),
-                    new Message(1, new Date(), "Anything", true, getMe(), contact)
-            });
+//            data.put(contact,
+//                new Message[] {
+//                    new Message(3, new Date(), "Nothing", false, contact, getMe(),),
+//                    new Message(2, new Date(), "Something", true, contact, getMe()),
+//                    new Message(1, new Date(), "Anything", true, getMe(), contact)
+//            });
 
             contact = new Contact("Doe", "Jack", "0123456789", 2);
             data.put(contact, new Message[0]);

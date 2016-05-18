@@ -1,6 +1,5 @@
 package temp;
 
-import Model.Contacts;
 import View.ResManager;
 import org.javagram.response.object.UserContact;
 

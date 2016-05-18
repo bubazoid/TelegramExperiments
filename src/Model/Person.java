@@ -1,4 +1,6 @@
-package DAO;
+package Model;
+
+import java.awt.image.BufferedImage;
 
 /**
  * Created by HerrSergio on 06.05.2016.
@@ -8,12 +10,16 @@ public class Person {
     private int id;
     private String firstName = "";
     private String lastName = "";
+    private BufferedImage smallProfilePhoto = new BufferedImage(41, 41, BufferedImage.TYPE_INT_ARGB);
 
 
     Person() {
 
     }
 
+    public String getLable() {
+        return firstName + " " + lastName;
+    }
     public String getFirstName() {
         return firstName;
     }
@@ -40,6 +46,13 @@ public class Person {
         this.id = id;
     }
 
+    public BufferedImage getSmallProfilePhoto() {
+        return smallProfilePhoto;
+    }
+
+    public void setSmallProfilePhoto(BufferedImage smallProfilePhoto) {
+        this.smallProfilePhoto = smallProfilePhoto;
+    }
 
     @Override
     public boolean equals(Object o) {
