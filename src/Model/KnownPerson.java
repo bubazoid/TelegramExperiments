@@ -11,7 +11,7 @@ public class KnownPerson extends Person {
 
     }
 
-    public String getFormatetPhoneNumber() {
+    public String getFormattedPhoneNumber() {
         String formattedPhoneNumber = phoneNumber.charAt(0) + " " + phoneNumber.substring(1, 4) + " " +
                 phoneNumber.substring(4, 7) + "-" + phoneNumber.substring(7, 9) + "-" + phoneNumber.substring(9, 11);
         return formattedPhoneNumber;

@@ -180,7 +180,7 @@ public class SelfUser extends Contact {
 //    }
 //
 //
-//    public String getFormatetPhoneNumber() {
+//    public String getFormattedPhoneNumber() {
 //        return "+7 987 505 25-89";
 //    }
 //

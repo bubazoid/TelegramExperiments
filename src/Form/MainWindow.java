@@ -219,6 +219,9 @@ public class MainWindow {
             for (int i = messages.size(); i > 0; i--) {
                 Model.Message message = messages.get(i - 1);
                 JPanel panel = new JPanel() {
+                    {
+                        setOpaque(false);
+                    }
                     @Override
                     public Dimension getMaximumSize() {
                         //Исправляем погань, на которую способен только BoxLayout

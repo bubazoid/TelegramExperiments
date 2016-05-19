@@ -4,7 +4,7 @@ import Form.*;
 import View.ComponentResizerExtended;
 import View.ContactCellRenderer;
 import View.MyOverlayPanel;
-import temp.MyBufferedPopupDialog;
+import View.MyBufferedPopupDialog;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,12 +28,9 @@ public class FormController extends JFrame {
     private ProfileSettings profileSettings = new ProfileSettings();
     private ContactListPane contactListPane = new ContactListPane();
     private AddContactButton addContactButton = new AddContactButton();
-    //    MyLayeredPane layoutPanel = new MyLayeredPane(mainWindow.getRootPanel(), profileSettings.getRootPanel(), addContact.getRootPanel(), editContact.getRootPanel());
     MyBufferedPopupDialog layoutPanel = new MyBufferedPopupDialog(mainWindow.getRootPanel(), profileSettings.getRootPanel(), addContact.getRootPanel(), editContact.getRootPanel());
     MyOverlayPanel contactListLayout = new MyOverlayPanel(contactListPane.getRootPanel(), addContactButton.getRootPanel());
-    //    private SelfUser selfUser;
     private ArrayList<Contact> contacts;
-    //    private DialogCellRenderer dialogCellRenderer;
 
     private int pX, pY;
 
@@ -178,9 +175,6 @@ public class FormController extends JFrame {
 
 
     private void verifyFIO() {
-
-//        selfUser.setFirstName(finishCheckIn.getFirstNameFTF().getText());
-//        selfUser.setLastName(finishCheckIn.getLastNameFTF().getText());
         switchToPhoneVerifyForm();
     }
 
@@ -262,7 +256,7 @@ public class FormController extends JFrame {
         } catch (IOException e) {
             e.printStackTrace();
         }
-//        phoneVerifyForm.getPhoneNumberField().setText(selfUser.getFormatetPhoneNumber());
+//        phoneVerifyForm.getPhoneNumberField().setText(selfUser.getFormattedPhoneNumber());
 //        rootForm.switchFormTo(phoneVerifyForm.getRootPanel());
 //        phoneVerifyForm.getPhoneVerifyCodeField().requestFocusInWindow();
 
@@ -326,8 +320,6 @@ public class FormController extends JFrame {
     }
 
     private void exitProgram() {
-
-        apiBridgeTelegramDAO.logOut();
         apiBridgeTelegramDAO.close();
         System.exit(0);
     }

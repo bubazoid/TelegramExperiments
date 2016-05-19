@@ -112,15 +112,16 @@ public class ContactCellRenderer extends JPanel implements ListCellRenderer<Obje
 
         g.drawImage(icon, 15, 9, null);
 
-        if (isSelected) {
-            if (apiBridgeTelegramDAO.isContactOnline(user)) {
+        if (apiBridgeTelegramDAO.isContactOnline(user)) {
+            if (isSelected) {
                 g.drawImage(ResManager.getMaskWhiteOnline(), 15, 9, null);
             } else {
-                g.drawImage(ResManager.getMaskWhite(), 15, 9, null);
+                g.drawImage(ResManager.getMaskGrayOnline(), 15, 9, null);
             }
         } else {
-            if (apiBridgeTelegramDAO.isContactOnline(user)) {
-                g.drawImage(ResManager.getMaskGrayOnline(), 15, 9, null);
+            if (isSelected) {
+                g.drawImage(ResManager.getMaskWhite(), 15, 9, null);
+
             } else {
                 g.drawImage(ResManager.getMaskGray(), 15, 9, null);
             }

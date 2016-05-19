@@ -56,15 +56,15 @@ public class ProfileSettings {
         this.me = me;
         firstNameFTF.setText(me.getFirstName());
         lastNameFTF.setText(me.getLastName());
-        phoneNumberLable.setText(me.getFormatetPhoneNumber());
+        phoneNumberLable.setText(me.getFormattedPhoneNumber());
     }
 
     private void createUIComponents() {
         panel = new JPanel() {
             {
                 setBackground(new Color(0, 0, 250, 255));
-                isOptimizedDrawingEnabled();
-                setDoubleBuffered(false);
+//                isOptimizedDrawingEnabled();
+//                setDoubleBuffered(false);
             }
 
             @Override
