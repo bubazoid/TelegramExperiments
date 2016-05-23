@@ -1,7 +1,10 @@
 package Model;
 
+import org.javagram.response.object.ContactStatus;
+
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -80,8 +83,13 @@ public class DebugTelegramDAO extends AbstractTelegramDAO {
     }
 
     @Override
-    public boolean isContactOnline(Contact contact) {
-        return false;
+    public Date isContactOnline(Contact contact) {
+        return null;
+    }
+
+    @Override
+    public ArrayList<ContactStatus> getContactsStatuses() throws IOException {
+        return null;
     }
 
     private static final String correctCode = "00000";

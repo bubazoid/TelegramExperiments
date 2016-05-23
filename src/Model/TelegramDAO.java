@@ -1,8 +1,11 @@
 package Model;
 
+import org.javagram.response.object.ContactStatus;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashMap;
 
 /**
@@ -34,7 +37,7 @@ public interface TelegramDAO extends Closeable {
     ArrayList<Message> getMessagesOfContact(int id, int lastMessageId, int limit) throws IOException;
     ArrayList<Message> getMessagesOfForeign(int id, long accessHash, int lastMessageId, int limit) throws IOException;
 
-    boolean isContactOnline(Contact contact);
+    Date isContactOnline(Contact contact);
 
     default ArrayList<Message> getMessages(Person person, Message last, int limit) throws IOException {
         int lastMessageId = 0;
@@ -69,4 +72,6 @@ public interface TelegramDAO extends Closeable {
 
     State getState() throws IOException;
     Updates getUpdates(State state) throws IOException;
+
+    ArrayList<ContactStatus> getContactsStatuses() throws IOException;
 }

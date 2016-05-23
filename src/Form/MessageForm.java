@@ -22,13 +22,14 @@ public class MessageForm extends JPanel {
 
         setLayout(boxLayout);
         setOpaque(false);
+//        setMaximumSize(new Dimension(width, Short.MAX_VALUE));
         setMaximumSize(new Dimension(width, Short.MAX_VALUE));
         textPane.setAlignmentX(0.05f);
         add(textPane);
 
         dateLabel.setAlignmentX(0.0f);
         add(dateLabel);
-        textPane.setSize(width, Short.MAX_VALUE);
+        textPane.setPreferredSize(new Dimension(width, getContentHeight(text)));
 //        textPane.setMaximumSize(new Dimension(width,Short.MAX_VALUE));
         textPane.setText(text);
         textPane.setForeground(Color.WHITE);
@@ -36,9 +37,9 @@ public class MessageForm extends JPanel {
         textPane.setOpaque(false);
         textPane.setEditable(false);
         textPane.setMargin(new Insets(MARGIN, MARGIN, MARGIN, MARGIN));
-        Dimension d = textPane.getPreferredSize();
-        d.width = width;
-        textPane.setPreferredSize(d);
+//        Dimension d = textPane.getPreferredSize();
+//        d.width = width;
+//        textPane.setPreferredSize(d);
         dateLabel.setFont(ResManager.getSansRegular().deriveFont(Font.PLAIN, 10));
         dateLabel.setForeground(new Color(0x6A6D6F));
         dateLabel.setText(date);
@@ -51,5 +52,13 @@ public class MessageForm extends JPanel {
         super.paintComponent(graphics);
         graphics.setColor(color);
         graphics.fillRoundRect(textPane.getX(), textPane.getY(), textPane.getWidth(), textPane.getHeight(), RADIUS, RADIUS);
+    }
+
+    private static int getContentHeight(String content) {
+        JEditorPane dummyEditorPane = new JEditorPane();
+        dummyEditorPane.setSize(300, Short.MAX_VALUE);
+        dummyEditorPane.setText(content);
+
+        return dummyEditorPane.getPreferredSize().height;
     }
 }

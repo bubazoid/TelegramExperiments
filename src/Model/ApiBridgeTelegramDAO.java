@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 
 /**
  * Created by HerrSergio on 06.05.2016.
@@ -18,7 +19,7 @@ import java.util.Collection;
 public class ApiBridgeTelegramDAO extends AbstractTelegramDAO {
 
     private TelegramApiBridge bridge;
-    private ArrayList<UserContact> userContactsStatus;
+    private ArrayList<ContactStatus> userContactsStatus;
     Long lastUpdateTime = Long.valueOf(0);
 
 
@@ -187,18 +188,18 @@ public class ApiBridgeTelegramDAO extends AbstractTelegramDAO {
     }
 
     @Override
-    public boolean isContactOnline(Contact contact) {
-        boolean isOnline = false;
+    public Date isContactOnline(Contact contact) {
+        Date isOnline = null;
 
         try {
             Long now = System.currentTimeMillis();
             if (now - lastUpdateTime > 3000 || userContactsStatus == null) {
-                userContactsStatus = bridge.contactsGetContacts();
+                userContactsStatus = bridge.contactsGetStatuses();
                 lastUpdateTime = System.currentTimeMillis();
             }
-            for (UserContact user : userContactsStatus) {
-                if (user.getId() == contact.getId()) {
-                    isOnline = user.isOnline();
+            for (ContactStatus user : userContactsStatus) {
+                if (user.getUserId() == contact.getId()) {
+                    isOnline = user.getExpires();
                     break;
                 }
             }
@@ -206,6 +207,11 @@ public class ApiBridgeTelegramDAO extends AbstractTelegramDAO {
             e.printStackTrace();
         }
         return isOnline;
+    }
+
+    @Override
+    public ArrayList<ContactStatus> getContactsStatuses() throws IOException {
+        return bridge.contactsGetStatuses();
     }
 
     @Override

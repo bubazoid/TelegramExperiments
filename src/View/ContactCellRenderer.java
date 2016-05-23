@@ -2,12 +2,15 @@ package View;
 
 import Model.*;
 import Model.Dialog;
+import org.javagram.response.object.ContactStatus;
 import temp.Contacts;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by Sergey on 15.05.2016.
@@ -24,11 +27,13 @@ public class ContactCellRenderer extends JPanel implements ListCellRenderer<Obje
     private Contacts contacts;
     private String topMessage = "";
     private ArrayList<Model.Dialog> dialogs;
-    TelegramDAO apiBridgeTelegramDAO;
+    //    TelegramDAO apiBridgeTelegramDAO;
+    private ArrayList<ContactStatus> statuses;
+    private Calendar calendar = Calendar.getInstance();
 
-    public ContactCellRenderer(TelegramDAO apiBridgeTelegramDAO) {
-        this.apiBridgeTelegramDAO = apiBridgeTelegramDAO;
-    }
+//    public ContactCellRenderer(TelegramDAO apiBridgeTelegramDAO) {
+//        this.apiBridgeTelegramDAO = apiBridgeTelegramDAO;
+//    }
 
     private void createUIComponents() {
         rootPanel = this;
@@ -112,7 +117,7 @@ public class ContactCellRenderer extends JPanel implements ListCellRenderer<Obje
 
         g.drawImage(icon, 15, 9, null);
 
-        if (apiBridgeTelegramDAO.isContactOnline(user)) {
+        if (isContactOnline(user)) {
             if (isSelected) {
                 g.drawImage(ResManager.getMaskWhiteOnline(), 15, 9, null);
             } else {
@@ -126,6 +131,23 @@ public class ContactCellRenderer extends JPanel implements ListCellRenderer<Obje
                 g.drawImage(ResManager.getMaskGray(), 15, 9, null);
             }
         }
+
+    }
+
+    public void setStatuses(ArrayList<ContactStatus> statuses) {
+        this.statuses = statuses;
+    }
+
+    private boolean isContactOnline(Contact contact) {
+        Date expireDate = new Date();
+        for (ContactStatus status : statuses) {
+            if (status.getUserId() == contact.getId()) {
+                expireDate = status.getExpires();
+                break;
+            }
+        }
+        assert expireDate != null;
+        return expireDate.compareTo(calendar.getTime()) > 0;
 
     }
 }
