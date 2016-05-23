@@ -40,7 +40,11 @@ public class FormController extends JFrame {
     TelegramDAO apiBridgeTelegramDAO = new ApiBridgeTelegramDAO();
     private ContactCellRenderer contactCellRenderer = new ContactCellRenderer();
     Me me;
-    private ArrayList<Dialog> dialogs;
+    private ArrayList<ContactStatus> userContactsStatus;
+    private ArrayList<Contact> userContacts;
+    private HashMap<Contact, ArrayList<Message>> messagesMap = new HashMap<>();
+    private Timer timer;
+
 
     //===========================================================================
     private static final int EDIT_CONTACT = 2;
@@ -211,8 +215,8 @@ public class FormController extends JFrame {
 
     private void loqOff() {
 
-
         apiBridgeTelegramDAO.logOut();
+        apiBridgeTelegramDAO.close();
         backForm();
         loginForm.clearFields();
         phoneVerifyForm.clearFields();
@@ -237,7 +241,7 @@ public class FormController extends JFrame {
                 }
                 if (me != null) {
                     contacts = apiBridgeTelegramDAO.getContacts();
-                    init();
+
                     switchToMainForm(true);
                 }
 
@@ -266,17 +270,10 @@ public class FormController extends JFrame {
     }
 
     private void switchToMainForm(boolean renew) {
-        if (renew) {
-
-            try {
-                contactCellRenderer.setDialogs(apiBridgeTelegramDAO.getDialogs());
-                contactCellRenderer.setStatuses(userContactsStatus);
-                contactListPane.fillContactList(contacts, contactCellRenderer);
-                mainWindow.setUser(me);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
+        layoutPanel.setIndex(MAIN_WINDOW);
+        if (renew || messagesMap == null || userContactsStatus == null || userContacts == null) {
+            init();
+            mainWindow.setUser(me);
         }
 
         rootForm.switchFormTo(layoutPanel);
@@ -288,11 +285,7 @@ public class FormController extends JFrame {
         if (contact != null) {
             mainWindow.setContact(contact);
 //            mainWindow.setMessages(contacts.getMessages(contact));
-            try {
-                mainWindow.setMessages(apiBridgeTelegramDAO.getMessagesOfContact(contact.getId(), 0, 10));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            mainWindow.setMessages(messagesMap.get(contact));
 
         }
 
@@ -324,57 +317,71 @@ public class FormController extends JFrame {
     }
 
     private void exitProgram() {
+        apiBridgeTelegramDAO.logOut();
         apiBridgeTelegramDAO.close();
         System.exit(0);
     }
 
     //=====================================================
-    private ArrayList<ContactStatus> userContactsStatus;
-    private ArrayList<Contact> userContacts;
-    private HashMap<Contact, ArrayList<Message>> messagesMap;
-    private Timer timer;
+
     //Временно создадим пустышку
-    private JDBC jdbc = new JDBC(apiBridgeTelegramDAO);
+
 
     private void init() {
+        updateContactList();
+        updateMessages();
+        updateContactsStatuses();
+        timer = new Timer(30000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                updateContactsStatuses();
+            }
+        });
+        Timer updMessagesTimer = new Timer(60000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                updateMessages();
+            }
+        });
+        timer.start();
+        updMessagesTimer.start();
+
+
+    }
+
+    private void updateMessages() {
+        userContacts.forEach(contact -> {
+            try {
+                ArrayList<Message> messages = new ArrayList<>(apiBridgeTelegramDAO.getMessagesOfContact(contact.getId(), 0, 15));
+                messagesMap.put(contact, messages);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        });
+        contactCellRenderer.setDialogs(messagesMap);
+    }
+
+    private void updateContactList() {
         try {
-
             userContacts = apiBridgeTelegramDAO.getContacts();
-//            userContacts.forEach(contact -> {
-//                try {
-//                    ArrayList<Message> messages = new ArrayList<Message>(jdbc.getMessagesByContact(contact));
-//                    int lastId = messages.get(messages.size()-1).getId();
-//                    messages.addAll(getNewMessage(contact,lastId));
-//                    messagesMap.put(contact,messages);
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//
-//            });
-            updateContactsStatuses();
-
-
+            contactListPane.fillContactList(contacts, contactCellRenderer);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
-    private ArrayList<Message> getNewMessage(Contact contact, int lastId) throws IOException {
-        return apiBridgeTelegramDAO.getMessagesOfContact(contact.getId(), lastId, Short.MAX_VALUE);
-
-    }
+//    private ArrayList<Message> getNewMessage(Contact contact, int lastId) throws IOException {
+//        return apiBridgeTelegramDAO.getMessagesOfContact(contact.getId(), lastId, Short.MAX_VALUE);
+//
+//    }
 
     private void updateContactsStatuses() {
         try {
             userContactsStatus = apiBridgeTelegramDAO.getContactsStatuses();
-            timer = new Timer(10000, new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    updateContactsStatuses();
-                }
-            });
-            timer.start();
+            contactCellRenderer.setStatuses(userContactsStatus);
+            contactListPane.getContactList().repaint();
+            //timer.restart();
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -21,9 +21,14 @@ public class MessageForm extends JPanel {
     public MessageForm(String text, String date, int width, Color color) {
 
         setLayout(boxLayout);
-        setOpaque(false);
-//        setMaximumSize(new Dimension(width, Short.MAX_VALUE));
-//        setMaximumSize(new Dimension(width, Short.MAX_VALUE));
+
+//        textPane.setSize(width, Short.MAX_VALUE);
+//        textPane.setText(text);
+//        textPane.setForeground(Color.WHITE);
+//        textPane.setOpaque(false);
+//        textPane.setEditable(false);
+//        textPane.setMargin(new Insets(MARGIN, MARGIN, MARGIN, MARGIN));
+
         textPane.setAlignmentX(0.05f);
         add(textPane);
 
@@ -32,7 +37,6 @@ public class MessageForm extends JPanel {
         textPane.setSize(width, Short.MAX_VALUE);
         textPane.setPreferredSize(new Dimension(width, getContentHeight(text) + MARGIN));
         textPane.setContentType("text/html");
-//        textPane.setMaximumSize(new Dimension(width,Short.MAX_VALUE));
         text = "<font color=\"white\">" + text + "</font>";
         textPane.setText(text);
         textPane.setForeground(Color.WHITE);
@@ -40,9 +44,7 @@ public class MessageForm extends JPanel {
         textPane.setOpaque(false);
         textPane.setEditable(false);
         textPane.setMargin(new Insets(MARGIN, MARGIN, MARGIN, MARGIN));
-//        Dimension d = textPane.getPreferredSize();
-//        d.width = width;
-//        textPane.setPreferredSize(d);
+
         dateLabel.setFont(ResManager.getSansRegular().deriveFont(Font.PLAIN, 10));
         dateLabel.setForeground(new Color(0x6A6D6F));
         dateLabel.setText(date);

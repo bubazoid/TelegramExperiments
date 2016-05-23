@@ -11,6 +11,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 
 /**
  * Created by Sergey on 15.05.2016.
@@ -26,7 +27,7 @@ public class ContactCellRenderer extends JPanel implements ListCellRenderer<Obje
     Image icon = null;
     private Contacts contacts;
     private String topMessage = "";
-    private ArrayList<Model.Dialog> dialogs;
+    private HashMap<Contact, ArrayList<Message>> dialogs;
     //    TelegramDAO apiBridgeTelegramDAO;
     private ArrayList<ContactStatus> statuses;
     private Calendar calendar = Calendar.getInstance();
@@ -61,11 +62,6 @@ public class ContactCellRenderer extends JPanel implements ListCellRenderer<Obje
 
         fioLable.setText(((Contact) value).getLable());
         topMessageLable.setText(getTopMessage(user));
-        dialogs.forEach(e -> {
-            if (e.getBuddy().getId() == user.getId()) {
-                topMessageLable.setText(e.getLastMessage().getText());
-            }
-        });
 
 
         Color background;
@@ -93,20 +89,15 @@ public class ContactCellRenderer extends JPanel implements ListCellRenderer<Obje
     }
 
     private String getTopMessage(Contact contact) {
-        String topMessage = "";
-        for (Dialog dialog :
-                dialogs) {
-            if (dialog.getBuddy().getId() == user.getId()) {
-                topMessage = dialog.getLastMessage().getText();
-                break;
-            }
+        topMessage = "";
+        ArrayList<Message> messages = dialogs.get(contact);
+        if (messages.size() > 0) {
+            topMessage = messages.get(messages.size() - 1).getText();
         }
-
-
         return topMessage;
     }
 
-    public void setDialogs(ArrayList<Dialog> dialogs) {
+    public void setDialogs(HashMap<Contact, ArrayList<Message>> dialogs) {
         this.dialogs = dialogs;
     }
 
@@ -147,7 +138,7 @@ public class ContactCellRenderer extends JPanel implements ListCellRenderer<Obje
             }
         }
         assert expireDate != null;
-        return expireDate.compareTo(calendar.getTime()) > 0;
+        return expireDate.compareTo(new Date()) > 0;
 
     }
 }
