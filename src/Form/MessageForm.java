@@ -9,7 +9,7 @@ import java.awt.*;
  * Created by HerrSergio on 17.05.2016.
  */
 public class MessageForm extends JPanel {
-    private JTextArea textPane = new JTextArea();
+    private JEditorPane textPane = new JEditorPane();
     private JLabel dateLabel = new JLabel();
     private BoxLayout boxLayout = new BoxLayout(this, BoxLayout.Y_AXIS);
 
@@ -23,14 +23,17 @@ public class MessageForm extends JPanel {
         setLayout(boxLayout);
         setOpaque(false);
 //        setMaximumSize(new Dimension(width, Short.MAX_VALUE));
-        setMaximumSize(new Dimension(width, Short.MAX_VALUE));
+//        setMaximumSize(new Dimension(width, Short.MAX_VALUE));
         textPane.setAlignmentX(0.05f);
         add(textPane);
 
         dateLabel.setAlignmentX(0.0f);
         add(dateLabel);
-        textPane.setPreferredSize(new Dimension(width, getContentHeight(text)));
+        textPane.setSize(width, Short.MAX_VALUE);
+        textPane.setPreferredSize(new Dimension(width, getContentHeight(text) + MARGIN));
+        textPane.setContentType("text/html");
 //        textPane.setMaximumSize(new Dimension(width,Short.MAX_VALUE));
+        text = "<font color=\"white\">" + text + "</font>";
         textPane.setText(text);
         textPane.setForeground(Color.WHITE);
 

@@ -332,6 +332,7 @@ public class FormController extends JFrame {
     private ArrayList<ContactStatus> userContactsStatus;
     private ArrayList<Contact> userContacts;
     private HashMap<Contact, ArrayList<Message>> messagesMap;
+    private Timer timer;
     //Временно создадим пустышку
     private JDBC jdbc = new JDBC(apiBridgeTelegramDAO);
 
@@ -352,6 +353,7 @@ public class FormController extends JFrame {
 //            });
             updateContactsStatuses();
 
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -366,6 +368,13 @@ public class FormController extends JFrame {
     private void updateContactsStatuses() {
         try {
             userContactsStatus = apiBridgeTelegramDAO.getContactsStatuses();
+            timer = new Timer(10000, new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    updateContactsStatuses();
+                }
+            });
+            timer.start();
         } catch (IOException e) {
             e.printStackTrace();
         }
