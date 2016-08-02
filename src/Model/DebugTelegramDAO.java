@@ -2,6 +2,7 @@ package Model;
 
 import org.javagram.response.object.ContactStatus;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -90,6 +91,16 @@ public class DebugTelegramDAO extends AbstractTelegramDAO {
     @Override
     public ArrayList<ContactStatus> getContactsStatuses() throws IOException {
         return null;
+    }
+
+    @Override
+    public BufferedImage[] getPhotos(Person person, boolean small, boolean b) {
+        return new BufferedImage[0];
+    }
+
+    @Override
+    public int getStatuses(ArrayList<Person> persons) {
+        return 0;
     }
 
     private static final String correctCode = "00000";

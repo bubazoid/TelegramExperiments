@@ -7,6 +7,7 @@ import org.javagram.response.object.inputs.InputUserOrPeerContact;
 import org.javagram.response.object.inputs.InputUserOrPeerForeign;
 import org.javagram.response.object.inputs.InputUserOrPeerSelf;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -212,6 +213,16 @@ public class ApiBridgeTelegramDAO extends AbstractTelegramDAO {
     @Override
     public ArrayList<ContactStatus> getContactsStatuses() throws IOException {
         return bridge.contactsGetStatuses();
+    }
+
+    @Override
+    public BufferedImage[] getPhotos(Person person, boolean small, boolean b) {
+        return new BufferedImage[0];
+    }
+
+    @Override
+    public int getStatuses(ArrayList<Person> persons) {
+        return 0;
     }
 
     @Override

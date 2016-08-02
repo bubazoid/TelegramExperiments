@@ -216,7 +216,6 @@ public class FormController extends JFrame {
     private void loqOff() {
 
         apiBridgeTelegramDAO.logOut();
-        apiBridgeTelegramDAO.close();
         backForm();
         loginForm.clearFields();
         phoneVerifyForm.clearFields();
@@ -360,6 +359,7 @@ public class FormController extends JFrame {
 
         });
         contactCellRenderer.setDialogs(messagesMap);
+
     }
 
     private void updateContactList() {

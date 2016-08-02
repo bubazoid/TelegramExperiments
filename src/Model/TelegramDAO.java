@@ -2,6 +2,7 @@ package Model;
 
 import org.javagram.response.object.ContactStatus;
 
+import java.awt.image.BufferedImage;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -74,4 +75,8 @@ public interface TelegramDAO extends Closeable {
     Updates getUpdates(State state) throws IOException;
 
     ArrayList<ContactStatus> getContactsStatuses() throws IOException;
+
+    BufferedImage[] getPhotos(Person person, boolean small, boolean b);
+
+    int getStatuses(ArrayList<Person> persons);
 }

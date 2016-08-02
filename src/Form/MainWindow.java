@@ -2,7 +2,6 @@ package Form;
 
 import Model.Contact;
 import Model.Me;
-import temp.SelfUser;
 import View.ResManager;
 
 
@@ -38,7 +37,7 @@ public class MainWindow {
     private JPanel contactIconPanel;
     private JPanel dialogPanel;
     private JPanel messegeDialogPanel;
-    private SelfUser user;
+    //    private SelfUser user;
     private Image userIconImage;
     private Image contactIconImage;
     private Me me;
@@ -215,6 +214,7 @@ public class MainWindow {
 
     public void setMessages(ArrayList<Model.Message> messages) {
         dialogPanel.removeAll();
+        dialogPanel.add(Box.createGlue());
         if (messages != null) {
             for (int i = messages.size(); i > 0; i--) {
                 Model.Message message = messages.get(i - 1);
